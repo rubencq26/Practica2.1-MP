@@ -128,7 +128,38 @@ public class Fecha implements Cloneable, Proceso{
         return (dia ==c.dia && mes ==c.mes && anio == c.anio);
     }
 
+    public Fecha diaSig(){
+        int dMes[] = {31,28,31,30,31,30,31,31,30,31,30,31};
+        int d = dia, m = mes, y = anio;
+        d += 1;
+        if(bisiesto()){
+            dMes[1] = 29;
+        }
+        if(d > dMes[mes-1]){
+            d = 1;
+            m++;
+            if(m > 12){
+                y++;
+                m = 1;
+            }
+        }
+        Fecha f = new Fecha(d, m, y);
+        return f;
+    }
+
+    public void setFecha(Fecha f){
+        dia = f.dia;
+        mes = f.mes;
+        anio = f.anio;
+    }
+
+    public Fecha getFechaNueva(int d, int m, int y){
+        Fecha f = new Fecha(d, m, y);
+        return f;
+    }
 }
+
+
 
 
 
