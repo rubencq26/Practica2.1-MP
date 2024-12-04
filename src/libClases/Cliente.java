@@ -32,7 +32,8 @@ public class Cliente implements  Cloneable, Proceso{
     }
 
     public Cliente(Cliente c){
-        codCliente = c.codCliente;
+        contador++;
+        codCliente = contador;
         nif = c.nif;
         nombre = c.nombre;
         fechaNac = new Fecha(c.fechaNac);
@@ -70,7 +71,7 @@ public class Cliente implements  Cloneable, Proceso{
 
     //Setters
     public static void setFechaPorDefecto(Fecha fPorDefecto) {
-        fechaPorDefecto = fPorDefecto;
+        fechaPorDefecto.setFecha(fPorDefecto.getDia(), fPorDefecto.getMes(), fPorDefecto.getAnio());
     }
 
     public void setFechaPorDefecto(int d, int m, int a){
@@ -132,7 +133,7 @@ public class Cliente implements  Cloneable, Proceso{
             return false;
         }
         Cliente c = (Cliente)obj;
-        return (nif ==c.nif && c.fechaNac ==c.fechaNac && nombre == c.nombre && fechaAlta == c.fechaAlta);
+        return (nif.equals(c.nif));
     }
 
 }

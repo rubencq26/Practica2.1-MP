@@ -39,7 +39,8 @@ public class ClienteMovil extends Cliente {
     }
 
     public void setFPermanencia(Fecha permanecia) {
-        this.permanecia = permanecia;
+        Fecha f = new Fecha(permanecia);
+        this.permanecia = f;
     }
 
     public void setMinutos(float minutos) {
@@ -50,16 +51,7 @@ public class ClienteMovil extends Cliente {
         this.precioMinuto = precioMinuto;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if(this == obj)return true;
-        if(obj == null)return false;
-        if(getClass() != obj.getClass()){
-            return false;
-        }
-        ClienteMovil c = (ClienteMovil) obj;
-        return (super.equals(obj) && c.permanecia == permanecia && c.minutos == minutos && c.precioMinuto == precioMinuto);
-    }
+
     @Override
     public void ver(){
         System.out.println(toString());
@@ -67,7 +59,7 @@ public class ClienteMovil extends Cliente {
 
     public String toString() {
         String c = super.toString();
-        c = c + permanecia + " " + minutos + " x " + precioMinuto + " --> " + factura();
+        c = c + " " + permanecia + " " + minutos + " x " + precioMinuto + " --> " + factura();
         return c;
     }
 
@@ -78,12 +70,7 @@ public class ClienteMovil extends Cliente {
     public ClienteMovil clone() {
         // Realizamos la clonación superficial utilizando super.clone(), lo que devolverá un Cliente
         // La clase ClienteMovil se asegura de que la clonación devuelva un ClienteMovil
-        ClienteMovil copia = (ClienteMovil) super.clone(); // Esto debería ser seguro
-
-        // Clonación profunda de objetos mutables
-        copia.permanecia = new Fecha(this.permanecia.getDia(), this.permanecia.getMes(), this.permanecia.getAnio());
-
-        return copia; // Re
+        return new ClienteMovil(this);
     }
 
 

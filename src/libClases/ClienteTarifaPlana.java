@@ -51,13 +51,16 @@ public class ClienteTarifaPlana extends Cliente {
 
     public String toString() {
         String c = super.toString();
-        c = c + Nacionalidad + " [" + tarifa + " por " + precio + "] " + minutos + " --> " + factura();
+        c = c + " " + Nacionalidad + " [" + tarifa + " por " + precio + "] " + minutos + " --> " + factura();
         return c;
     }
 
     public float factura() {
         float total = minutos - tarifa;
-        return (precio) + total * precio;
+        if(total < 0){
+            total = 0;
+        }
+        return (precio) + total * precioMinuto;
     }
 
     public static void setPrecioMinuto(float pMinuto) {
@@ -68,15 +71,6 @@ public class ClienteTarifaPlana extends Cliente {
         System.out.println(toString());
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ClienteTarifaPlana c = (ClienteTarifaPlana) obj;
-        return (super.equals(obj) && c.minutos == minutos && c.Nacionalidad == Nacionalidad);
-    }
 
     public static float getLimite() {
         return tarifa;
@@ -95,8 +89,7 @@ public class ClienteTarifaPlana extends Cliente {
     }
 
     public ClienteTarifaPlana clone() {
-        ClienteTarifaPlana copia = (ClienteTarifaPlana) super.clone();
-        return copia;
+        return new ClienteTarifaPlana(this);
     }
 
 }
