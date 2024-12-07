@@ -108,12 +108,10 @@ public class Cliente implements  Cloneable, Proceso{
 
     @Override
     public Cliente clone() {
-        try {
-            // Clonación superficial
-            Cliente copia = (Cliente) super.clone();
+        // Clonación superficial
 
-            // Realizamos una copia profunda de las fechas para evitar referencias compartidas
-            // Crear nuevas instancias de Fecha para fechaNac y fechaAlta
+        // Realizamos una copia profunda de las fechas para evitar referencias compartidas
+        // Crear nuevas instancias de Fecha para fechaNac y fechaAlta
             Fecha fechaNacCopia = new Fecha(this.fechaNac.getDia(), this.fechaNac.getMes(), this.fechaNac.getAnio());
             Fecha fechaAltaCopia = new Fecha(this.fechaAlta.getDia(), this.fechaAlta.getMes(), this.fechaAlta.getAnio());
 
@@ -121,9 +119,7 @@ public class Cliente implements  Cloneable, Proceso{
             // pero ya hemos creado copias independientes de los objetos Fecha.
             return new Cliente(this.nif, this.nombre, fechaNacCopia, fechaAltaCopia);
 
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError("Clonación no soportada"); // Nunca debería ocurrir
-        }
+
     }
 
     public boolean equals(Object obj){
