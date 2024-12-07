@@ -77,7 +77,7 @@ public class Fecha implements Cloneable, Proceso{
         int dia, mes, anio;
         do{
             System.out.print("Introduce la Fecha (dd/mm/yyyy): ");
-            String cadena = scanner.next();
+            String cadena = scanner.nextLine();
             String[] tokens = cadena.split("/");
             try{
                 if(tokens.length != 3){
@@ -97,7 +97,7 @@ public class Fecha implements Cloneable, Proceso{
                 System.out.println("Fecha no valida");
             }
         }while(!valida);
-        scanner.close();
+        //scanner.close();
         return fecha;
     }
     static public boolean mayor(Fecha f1, Fecha f2){

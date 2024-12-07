@@ -31,7 +31,7 @@ public class Empresa implements Cloneable, Proceso{
         clientes = new Cliente[5];
     }
 
-    public int getNClientes() {
+    public int getN() {
         return nClientes;
     }
 
@@ -64,16 +64,41 @@ public class Empresa implements Cloneable, Proceso{
         char s;
         int pos=buscar(dni);
         Scanner sc = new Scanner(System.in);
-        if (pos != -1) {
+        if (pos == -1) {
+            System.out.println("Cliente no encontrado: ");
+            return;
+        }
+
+        for(int i=pos; i< nClientes-1; i++) {
+            clientes[i] = clientes[i+1];
+        }
+        if (nmax-5 == nClientes && nmax!=5){
+            Cliente[] aux=clientes;
+            for(int i=0; i < nClientes; i++) {
+                aux[i] = clientes[i];
+            }
+            clientes = aux;
+        }
+            clientes[nClientes - 1] = null;
+            nClientes--;
+    }
+
+    public void baja(){
+        String nif,nombre;
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Introduzca el nif de cliente para dar de baja: ");
+        nif = sc.nextLine();
+        int pos=buscar(nif);
+        if (pos == -1) {
             System.out.println("Cliente no encontrado: ");
             return;
         }
         clientes[pos].ver();
         System.out.println("¿Seguro que desea eliminarlo (s/n): ");
-        s = sc.next().charAt(0);
-
+        char s = sc.next().charAt(0);
         if (s=='s' || s=='S') {
-            for(int i=pos; i<=nClientes-1; i--) {
+            nombre=clientes[pos].getNombre();
+            for(int i=pos; i < nClientes-1; i++) {
                 clientes[i]  =clientes[i+1];
             }
             if (nmax-5==nClientes && nmax!=5){
@@ -85,24 +110,17 @@ public class Empresa implements Cloneable, Proceso{
             }
             clientes[nClientes-1]=null;
             nClientes--;
+            System.out.println("El cliente "+ nombre +" con nif "+ nif +" ha sido eliminado. \n");
+        }else{
+            System.out.println("El cliente con nif "+ clientes[pos].getNif() +" no se elimina. \n");
         }
-    }
-
-    public void baja(){
-        String nif;
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Introduzca el nif de cliente para dar de baja: ");
-        nif = sc.nextLine();
-        baja(nif);
     }
 
     public void alta(){
         String nif, nombre, nac;
         float minutos, preciominuto, precio, tarifa;
-        Fecha fAl=null;
-        Fecha fNac=null;
-        Fecha fPer=null;
         Cliente c;
+       Fecha fNac, fPer=null, fAl;
         int tipo;
         Scanner sc = new Scanner(System.in);
         System.out.println("DNI: ");
@@ -112,40 +130,36 @@ public class Empresa implements Cloneable, Proceso{
             int i= buscar(nif);
             c=getCliente(i+1);
             c.ver();
-            sc.close();
-            return;
-        }
-        if(nmax==nClientes){
-            Cliente[] aux=clientes;
-            nmax+=5;
-            aux=new Cliente[nmax];
-            for(int i=0; i<nClientes; i++) {
-                aux[i] =clientes[i];
-            }
-            clientes=aux;
-        }
-        System.out.println("Nombre: ");
-        nombre = sc.nextLine();
-        System.out.println("Fecha Nacimiento: ");
-        fNac.pedirFecha();
-        System.out.println("Fecha Alta: ");
-        fAl.pedirFecha();
-        System.out.println("Minutos que habla al mes: ");
-        minutos = sc.nextFloat();
-        System.out.println("Indique tipo de cliente (1-Movil, 2-Tarifa Plana): ");
-        tipo = sc.nextInt();
-        System.out.println("Precio por minuto: ");
-        preciominuto = sc.nextFloat();
-        if (tipo==1){
-            System.out.println("Fecha fin permanencia: ");
-            fPer.pedirFecha();
-            clientes[nClientes]=new ClienteMovil(nif, nombre, fNac, fAl, fPer, minutos, preciominuto);
+
         }else{
-            System.out.println("Nacionalidad: ");
-            nac = sc.nextLine();
+            System.out.println("Nombre: ");
+            nombre = sc.nextLine();
+            System.out.println("Fecha Nacimiento: ");
+            fNac= Fecha.pedirFecha();
+            System.out.println("Fecha Alta: ");
+            fAl =Fecha.pedirFecha();
+            System.out.println("Minutos que habla al mes: ");
+            minutos = sc.nextFloat();
+            System.out.println("Indique tipo de cliente (1-Movil, 2-Tarifa Plana): ");
+            tipo = sc.nextInt();
+
+            if (tipo==1){
+                System.out.println("Precio por minuto: ");
+                preciominuto = sc.nextFloat();
+                System.out.println("Fecha fin permanencia: ");
+                fPer=Fecha.pedirFecha();
+                c =new ClienteMovil(nif, nombre, fNac, fAl, fPer, minutos, preciominuto);
+            }else{
+                System.out.println("Nacionalidad: ");
+                sc.nextLine();
+                nac = sc.nextLine();
+                c = new ClienteTarifaPlana(nif,nombre,fNac, fAl, minutos, nac);
+            }
+            alta(c);
+
+
         }
-        nClientes++;
-        sc.close();
+
     }
 
     public void ver(){
@@ -153,8 +167,65 @@ public class Empresa implements Cloneable, Proceso{
     }
 
     public String toString() {
-        String c =
-        c = ;
+        String c = "";
+        for (int i = 0; i < nClientes; i++) {
+            c += clientes[i].toString()+ "\n";
+        }
         return c;
+    }
+
+    public float factura(){
+        float fact=0;
+        ClienteMovil cm;
+        ClienteTarifaPlana ctp;
+        for (int i = 0; i < nClientes; i++) {
+            if(clientes[i].getClass()==ClienteMovil.class){
+                cm = (ClienteMovil)clientes[i];
+                fact +=cm.factura();
+            }else{
+                ctp = (ClienteTarifaPlana)clientes[i];
+                fact +=ctp.factura();
+            }
+        }
+        return fact;
+    }
+
+    public Object clone() {
+        Empresa emp= new Empresa();
+        ClienteMovil cm;
+        ClienteTarifaPlana ct;
+        for (int i = 0; i < nClientes; i++) {
+            if(clientes[i].getClass()==ClienteMovil.class){
+                cm = new ClienteMovil((ClienteMovil) clientes[i]);
+                emp.alta(cm);
+            }else{
+                ct = new ClienteTarifaPlana((ClienteTarifaPlana) clientes[i]);
+                emp.alta(ct);
+            }
+
+        }
+        return emp;
+    }
+
+    public int nClienteMovil() {
+        int nCm= 0;
+        for (int i = 0; i < nClientes; i++) {
+            if(clientes[i].getClass()==ClienteMovil.class){
+                nCm++;
+            }
+        }
+        return nCm;
+    }
+
+    public void descuento(int desc) {
+        ClienteMovil cm;
+        for (int i = 0; i < nClientes; i++) {
+            if (clientes[i] instanceof ClienteMovil) {  // Usar instanceof para comprobar el tipo
+                cm = (ClienteMovil) clientes[i];
+                // Aplicar el descuento correctamente en porcentaje
+                float precioConDescuento = cm.getPrecioMinuto() * (1 - desc / 100.0f);
+                cm.setPrecioMinuto(precioConDescuento);
+            }
+        }
     }
 }
